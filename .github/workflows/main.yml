@@ -7,8 +7,9 @@ on:
   schedule:
     - cron: '0 0 1 * *'
 
-# Node.js 24 환경을 강제로 사용하도록 설정하여 경고 메시지를 해결합니다.
+# 경고를 없애기 위해 Node.js 24 사용을 명시적으로 수락합니다.
 env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -18,8 +19,10 @@ jobs:
       contents: write
     
     steps:
+      # v4 대신 최신 업데이트가 반영된 버전을 사용하거나, 
+      # Node 24 환경 변수가 적용된 상태에서 실행합니다.
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,5 +42,5 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add korea_cli_history.csv
-          git commit -m "System: Update CLI data for April 2026" || echo "No changes to commit"
+          git commit -m "System: Routine Update CLI data" || echo "No changes to commit"
           git push
