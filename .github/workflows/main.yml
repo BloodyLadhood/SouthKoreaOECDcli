@@ -1,10 +1,11 @@
-name: Update OECD CLI Data
+name: Update CLI Data
 
 on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # <--- 이 한 줄이 "Run workflow" 버튼을 만드는 마법의 주문입니다!
   schedule:
-    # 매월 10일 자정(UTC)에 실행 (OECD 갱신 주기 고려)
-    - cron: '0 0 10 * *'
-  workflow_dispatch: # 필요할 때 수동으로도 실행 가능 버튼 생성
+    - cron: '0 0 1 * *' # 매달 1일 자동 실행
 
 jobs:
   build:
