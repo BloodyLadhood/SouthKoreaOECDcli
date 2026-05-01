@@ -5,8 +5,8 @@ from datetime import datetime
 
 def update_korea_cli():
     # 파라미터를 최소화하여 OECD가 보유한 최신 데이터를 통째로 가져오는 주소입니다.
-    url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.0/KOR.M.LI...AA...H?dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
-    
+    # 최신 규격(DSD_CLI) 경로
+url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_CLI@DF_CLI,1.0/KOR.M.LI...AA...H?dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
     try:
         response = requests.get(url, timeout=30)
         if response.status_code == 200:
