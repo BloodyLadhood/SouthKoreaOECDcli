@@ -3,36 +3,36 @@ name: Update CLI Data
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # <--- 이 한 줄이 "Run workflow" 버튼을 만드는 마법의 주문입니다!
+  workflow_dispatch: # 이 줄이 버튼을 만듭니다.
   schedule:
-    - cron: '0 0 1 * *' # 매달 1일 자동 실행
+    - cron: '0 0 1 * *'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: # 파일 쓰기 권한 명시적 부여
+      contents: write
+    
     steps:
-      - name: 저장소 코드 가져오기
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: 파이썬 설치
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
-      - name: 라이브러리 설치
+      - name: Install dependencies
         run: |
           pip install pandas requests
 
-      - name: 스크립트 실행
+      - name: Run Update Script
         run: python update_cli.py
 
-  - name: Run Update Script
-      run: python update_cli.py
-
-    - name: Check and Push CSV
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add korea_cli_history.csv
-        git commit -m "Update CLI data for April 2026" || echo "No changes to commit"
-        git push
+      - name: Commit and Push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add korea_cli_history.csv
+          git commit -m "Update CLI data for April 2026 analysis" || echo "No changes to commit"
+          git push
