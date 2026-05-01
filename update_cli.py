@@ -6,7 +6,7 @@ from datetime import datetime
 def update_korea_cli():
     # 1. OECD API URL 수정 (전체 기간을 가져오도록 더 포괄적인 주소 사용)
     # 2026년 4월 현재 데이터까지 모두 포함할 수 있도록 쿼리를 확장했습니다.
-    url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.0/KOR.M.LI...AA...H?startPeriod=2015-01&dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
+   url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_CLI@DF_CLI,1.0/KOR.M.LI...AA...H?startPeriod=2015-01&dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
     
     response = requests.get(url)
     if response.status_code == 200:
