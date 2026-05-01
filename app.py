@@ -14,10 +14,12 @@ try:
     
     # 시간순 정렬 및 MoM 계산
     df = df.sort_values('TIME_PERIOD')
-    df['MoM'] = df['Value'].diff() # 전월 대비 증감액
+    
+    # 컬럼명이 'Value'가 아닌 'OBS_VALUE'이므로 이를 반영하여 수정 [핵심 수정 부분]
+    df['MoM'] = df['OBS_VALUE'].diff() # 전월 대비 증감액
     
     # 최신 데이터 요약
-    latest_val = df.iloc[-1]['Value']
+    latest_val = df.iloc[-1]['OBS_VALUE']
     latest_mom = df.iloc[-1]['MoM']
     
     col1, col2 = st.columns(2)
@@ -26,11 +28,14 @@ try:
 
     # 차트 그리기
     st.subheader("CLI 지수 및 MoM 추이")
-    fig = px.line(df, x='TIME_PERIOD', y='Value', title='Korea CLI (Absolute)')
+    # y축 데이터명을 'OBS_VALUE'로 변경
+    fig = px.line(df, x='TIME_PERIOD', y='OBS_VALUE', title='Korea CLI (Absolute Trend)')
     st.plotly_chart(fig, use_container_width=True)
     
-    fig_mom = px.bar(df, x='TIME_PERIOD', y='MoM', title='CLI MoM (Relative Speed)')
+    fig_mom = px.bar(df, x='TIME_PERIOD', y='MoM', title='CLI MoM (Change Speed)')
     st.plotly_chart(fig_mom, use_container_width=True)
 
 except FileNotFoundError:
-    st.error("아직 korea_cli_history.csv 파일이 생성되지 않았습니다. GitHub Actions를 먼저 실행해주세요.")
+    st.error("아직 korea_cli_history.csv 파일이 생성되지 않았습니다. GitHub Actions가 데이터를 수집할 때까지 잠시만 기다려주세요.")
+except Exception as e:
+    st.error(f"오류가 발생했습니다: {e}")
