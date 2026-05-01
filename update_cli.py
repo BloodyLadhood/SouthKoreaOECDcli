@@ -1,26 +1,32 @@
 import pandas as pd
 import requests
 import io
+from datetime import datetime
 
-def diagnose_oecd_data():
-    # 현재 유효할 것으로 판단되는 세 가지 주요 경로를 모두 테스트합니다.
-    test_urls = {
-        "Legacy(구형)": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.0/KOR.M.LI...AA...H?dimensionAtObservation=AllDimensions&format=csvfilewithlabels",
-        "New(신형-DSD_CLI)": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_CLI@DF_CLI,1.0/KOR.M.LI...AA...H?dimensionAtObservation=AllDimensions&format=csvfilewithlabels",
-        "Global(전체)": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,1.0/KOR.M.LI...AA...H?dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
-    }
-
-    for name, url in test_urls.items():
-        try:
-            response = requests.get(url, timeout=15)
-            if response.status_code == 200:
-                df = pd.read_csv(io.StringIO(response.text))
-                last_date = df['TIME_PERIOD'].max()
-                print(f"✅ {name} 경로 연결 성공! | 최신 데이터 시점: {last_date}")
-            else:
-                print(f"❌ {name} 경로 실패 (상태 코드: {response.status_code})")
-        except Exception as e:
-            print(f"⚠️ {name} 경로 오류 발생: {e}")
+def update_korea_cli():
+    # 파라미터를 최소화하여 OECD가 보유한 최신 데이터를 통째로 가져오는 주소입니다.
+    url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.0/KOR.M.LI...AA...H?dimensionAtObservation=AllDimensions&format=csvfilewithlabels"
+    
+    try:
+        response = requests.get(url, timeout=30)
+        if response.status_code == 200:
+            df = pd.read_csv(io.StringIO(response.text))
+            
+            # 중복 제거 및 시간순 정렬로 데이터 무결성 확보
+            if 'TIME_PERIOD' in df.columns:
+                df = df.drop_duplicates(subset=['TIME_PERIOD'])
+                df = df.sort_values('TIME_PERIOD')
+            
+            # 새롭게 파일을 생성하여 저장
+            df.to_csv("korea_cli_history.csv", index=False)
+            
+            last_date = df['TIME_PERIOD'].max()
+            print(f"✅ 새 파일 생성 완료: {datetime.now()}")
+            print(f"📅 최신 데이터 확인: {last_date}")
+        else:
+            print(f"❌ 호출 실패: {response.status_code}")
+    except Exception as e:
+        print(f"⚠️ 오류: {e}")
 
 if __name__ == "__main__":
-    diagnose_oecd_data()
+    update_korea_cli()
