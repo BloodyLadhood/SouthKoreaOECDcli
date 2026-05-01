@@ -3,14 +3,18 @@ name: Update CLI Data
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # 이 줄이 버튼을 만듭니다.
+  workflow_dispatch:
   schedule:
     - cron: '0 0 1 * *'
+
+# Node.js 24 환경 강제 적용 (경고 해결)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: # 파일 쓰기 권한 명시적 부여
+    permissions:
       contents: write
     
     steps:
@@ -24,15 +28,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas requests
+          python -m pip install --upgrade pip
+          pip install pandas requests lxml # lxml 추가 (OECD 데이터 파싱 안정성)
 
       - name: Run Update Script
         run: python update_cli.py
 
-      - name: Commit and Push if changed
+      - name: Commit and Push
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add korea_cli_history.csv
-          git commit -m "Update CLI data for April 2026 analysis" || echo "No changes to commit"
+          git commit -m "Update CLI data for April 2026" || echo "No changes to commit"
           git push
