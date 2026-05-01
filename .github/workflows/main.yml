@@ -25,10 +25,13 @@ jobs:
       - name: 스크립트 실행
         run: python update_cli.py
 
-     - name: Commit and push if changed
-  run: |
-    git config --local user.email "action@github.com"
-    git config --local user.name "GitHub Action"
-    git add korea_cli_history.csv
-    git commit -m "Update CLI data" || exit 0
-    git push
+  - name: Run Update Script
+      run: python update_cli.py
+
+    - name: Check and Push CSV
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add korea_cli_history.csv
+        git commit -m "Update CLI data for April 2026" || echo "No changes to commit"
+        git push
