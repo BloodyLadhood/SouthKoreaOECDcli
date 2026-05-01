@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 페이지 설정
+# 페이지 설정 #
 st.set_page_config(page_title="Korea CLI & Export Monitor", layout="wide")
 
 st.title("📈 대한민국 경기선행지수(CLI) 실시간 모니터링")
